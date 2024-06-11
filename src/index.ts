@@ -10,9 +10,26 @@
  *
  * Learn more at https://developers.cloudflare.com/workers/
  */
+import { Hono } from 'hono';
 
-export default {
-	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-		return new Response('Hello World!');
-	},
-};
+export type Env = {};
+
+const app = new Hono<{ Bindings: Env }>();
+
+app.get('/', async (c) => {
+	try {
+		return c.json({
+			message: 'Hello World',
+		});
+	} catch (error) {
+		console.log(error);
+		return c.json(
+			{
+				error,
+			},
+			500,
+		);
+	}
+});
+
+export default app;
